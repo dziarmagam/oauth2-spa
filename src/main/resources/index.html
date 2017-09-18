@@ -5,16 +5,13 @@
     <title>Server site application</title>
 </head>
 <body>
-<div id="aouth">
+<p id="data">No data from google account</p>
+<button onclick="startOAuth2()">Get data</button>
 
-</div>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="configuration.js"></script>
 <script>
-
-function getState(){
-    var url = new URL(window.location.href);
-    
-}
-
+    window.onload = onInit();
 </script>
 </body>
 </html>
