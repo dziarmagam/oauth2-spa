@@ -21,7 +21,6 @@ var STATE = {
 function getState() {
     var url = new URL(window.location.href);
     if(url.href.includes(ACCESS_TOKEN_PATH_KEY)){
-
         return STATE.CALLBACK;
     }else {
         return STATE.NEW;
@@ -34,14 +33,16 @@ function onInit(){
     }
 }
 
-function handleOAuth2Data(data){
+function handleOAuth2Data(data) {
     console.dir(data);
-
-    var callUrl = createApiCallUrl(data);
-    $.ajax({
-        'url': callUrl,
-        'success': handleApiResponse
-    });
+    if (data.state == randomState) {
+        console.dir("State is ok")
+        var callUrl = createApiCallUrl(data);
+        $.ajax({
+                   'url': callUrl,
+                   'success': handleApiResponse
+               });
+    }
 }
 
 function handleApiResponse(data){
@@ -62,7 +63,7 @@ function startOAuth2() {
 
 }
 function generateRandom(){
-    return Math.rand + new Date().getTime();
+    return new Date().getTime();
 }
 
 function buildAuthorizationUrl(randomState){
