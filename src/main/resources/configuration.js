@@ -4,7 +4,7 @@ var config = {
     api_uri:'https://www.googleapis.com/gmail/v1/users/',
     api_endpoint:'profile',
     redirect_uri:'http://localhost:8000',
-    scope:'https://mail.google.com/ https://mail.google.com/ https://mail.google.com/ https://mail.google.com/ https://mail.google.com/',
+    scope:'https://mail.google.com/',
     response_type:'token',
     user:'oauth.lecture@gmail.com'
 }
@@ -18,6 +18,14 @@ var STATE = {
     NEW:'NEW'
 }
 
+// Init window
+
+function onInit(){
+    if(getState() == STATE.CALLBACK){
+        handleCallback();
+    }
+}
+
 function getState() {
     var url = new URL(window.location.href);
     if(url.href.includes(ACCESS_TOKEN_PATH_KEY)){
@@ -27,11 +35,35 @@ function getState() {
     }
 }
 
-function onInit(){
-    if(getState() == STATE.CALLBACK){
-        handleCallback();
-    }
+// Parse response with Access Token
+
+function handleCallback(){
+    data = parseCallbackUrl();
+    window.opener.handleOAuth2Data(data);
+    window.close();
 }
+
+function parseCallbackUrl(){
+    console.dir(window.location.href);
+    var hrefData = window.location.href.split("#")[1].split("&");
+    var state = extractValue(hrefData[0]);
+    var access_token = extractValue(hrefData[1]);
+    var token_type = extractValue(hrefData[2]);
+    var expire_in = extractValue(hrefData[3]);
+
+    return {
+        state: state,
+        access_token: access_token,
+        token_type: token_type,
+        expire_in: expire_in
+    };
+}
+
+function extractValue(keyValuePair){
+    return keyValuePair.split("=")[1];
+}
+
+//Get data using OAuth Access Token
 
 function handleOAuth2Data(data) {
     console.dir(data);
@@ -45,16 +77,19 @@ function handleOAuth2Data(data) {
     }
 }
 
+
+function createApiCallUrl(data){
+    return config.api_uri + encodeURIComponent(config.user) + "/" + config.api_endpoint
+           + "?access_token=" + data.access_token;
+}
+
 function handleApiResponse(data){
     console.dir(data);
     $('#data').text(JSON.stringify(data));
 }
 
 
-function createApiCallUrl(data){
-    return config.api_uri + encodeURIComponent(config.user) + "/" + config.api_endpoint
-        + "?access_token=" + data.access_token;
-}
+//Start OAuth 2
 
 function startOAuth2() {
     randomState = generateRandom();
@@ -75,27 +110,3 @@ function buildAuthorizationUrl(randomState){
 }
 
 
-function parseCallbackUrl(){
-    var hrefData = window.location.href.split("#")[1].split("&");
-    var state = extractValue(hrefData[0]);
-    var access_token = extractValue(hrefData[1]);
-    var token_type = extractValue(hrefData[2]);
-    var expire_in = extractValue(hrefData[3]);
-
-    return {
-        state: state,
-        access_token: access_token,
-        token_type: token_type,
-        expire_in: expire_in
-    };
-}
-
-function extractValue(keyValuePair){
-    return keyValuePair.split("=")[1];
-}
-
-function handleCallback(){
-    data = parseCallbackUrl();
-    window.opener.handleOAuth2Data(data);
-    window.close();
-}
