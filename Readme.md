@@ -9,7 +9,12 @@ Configuration is placed in config object in `configuration.js` file.
 Application is calling google gmail API.
 How to register client application at google - https://www.youtube.com/watch?v=0gd4jbKHBWM
 
-##configuration description
+####Note
+
+This example contain minimal amount of additional frameworks and API in order
+to keep the code as simple as possible and demonstrate how HTTP communications looks like in OAuth2.
+
+##Configuration description
     client_id - client id obtain after application is registered in authorization server as client
     authorizationUri - uri to authorization server.
     scope - scope passed to authorization server. Multiple scope can be included separated by white space e.g user car
@@ -18,3 +23,6 @@ How to register client application at google - https://www.youtube.com/watch?v=0
     api_uri - uri to API endpoint
     api_endpoint - name of the API endpoint
     user - email of the user to retrieve information from
+    
+    
+
